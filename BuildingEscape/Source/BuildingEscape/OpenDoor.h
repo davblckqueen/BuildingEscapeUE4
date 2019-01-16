@@ -28,8 +28,8 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
-	UPROPERTY(VisibleAnywhere)
-	float OpenAngle = 90.0f;
+	UPROPERTY(EditAnywhere) //VisibleEnywhere si queremos que no se edite y se vea
+	float OpenAngle = 0.0f;
 
 	UPROPERTY(EditAnywhere)
 	ATriggerVolume* PreassurePlate;
