@@ -45,7 +45,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 		*PlayerViewPointRotator.ToString()
 	);*/
 
-	float Reach = 100.f;
+	
 	
 	FVector LineTraceEnd = PlayerViewPointLocation + PlayerViewPointRotator.Vector() * Reach;
 	//Draw a red trace in the world to visualice it
