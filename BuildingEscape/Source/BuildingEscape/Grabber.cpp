@@ -45,6 +45,7 @@ void UGrabber::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("Se encontro InputComponent."));
 		//Bind the Input Access / Vincular el comando de entrada.
 		InputComponent->BindAction("Grab", IE_Pressed, this, &UGrabber::Grab);
+		InputComponent->BindAction("Grab", IE_Released, this, &UGrabber::Released);
 	}
 	else
 	{
@@ -55,6 +56,11 @@ void UGrabber::BeginPlay()
 void UGrabber::Grab()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Grab is pressed / Se presiono Grab."));
+}
+
+void UGrabber::Released()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Grab is released / Solto comando Grab."));
 }
 
 // Called every frame

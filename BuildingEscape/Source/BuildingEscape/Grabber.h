@@ -34,4 +34,7 @@ private:
 
 	//Ray-cast and grab what´s in reach. / Hace el rayo y coge lo que este a su alcance.
 	void Grab();
+
+	//Called when Grab is released /  Funcion para cuando se suelta el comando Grab.
+	void Released();
 };
