@@ -22,12 +22,32 @@ UGrabber::UGrabber()
 // Called when the game starts
 void UGrabber::BeginPlay()
 {
-	Super::BeginPlay();
+	Super::BeginPlay();	
+	FindPhysicsComponent();
+	SetupInputComponent();	
+}
 
-	UE_LOG(LogTemp, Warning, TEXT("Grabber is ready!!"));
-	
+void UGrabber::Grab()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Grab is pressed / Se presiono Grab."));
+
+	///LINE TRACE and see if we reach any actors with physics body collitions channel set
+	GetFirstPhysicsBodyInReach();
+
+	///If we hit something then attach a physics handle
+	//TODO attach physics handle
+}
+
+void UGrabber::Released()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Grab is released / Solto comando Grab."));
+	//TODO Release physics handle
+}
+
+void UGrabber::FindPhysicsComponent()
+{
 	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
-	
+
 	if (PhysicsHandle)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Se encontro componente con fisicas en %s ."), *(GetOwner()->GetName()));
@@ -36,7 +56,10 @@ void UGrabber::BeginPlay()
 	{
 		UE_LOG(LogTemp, Error, TEXT("No se encuentra componente con fisicas en %s ."), *(GetOwner()->GetName()));
 	}
+}
 
+void UGrabber::SetupInputComponent()
+{
 	///Solo lee cuando se depura el juego.
 	InputComponent = GetOwner()->FindComponentByClass<UInputComponent>();
 
@@ -53,21 +76,8 @@ void UGrabber::BeginPlay()
 	}
 }
 
-void UGrabber::Grab()
+const FHitResult UGrabber::GetFirstPhysicsBodyInReach()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Grab is pressed / Se presiono Grab."));
-}
-
-void UGrabber::Released()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Grab is released / Solto comando Grab."));
-}
-
-// Called every frame
-void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
 	//Get player point view this tick
 	FVector PlayerViewPointLocation;
 	FRotator PlayerViewPointRotator;
@@ -75,14 +85,9 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 		OUT PlayerViewPointLocation,
 		OUT PlayerViewPointRotator
 	);
-	//TODO log out to test
-	/*UE_LOG(LogTemp, Warning, TEXT("PointView: P: %s R: %s"), 
-		*PlayerViewPointLocation.ToString(), 
-		*PlayerViewPointRotator.ToString()
-	);*/
 
-	
-	
+
+
 	FVector LineTraceEnd = PlayerViewPointLocation + PlayerViewPointRotator.Vector() * Reach;
 	///Draw a red trace in the world to visualice it
 	DrawDebugLine(
@@ -113,6 +118,15 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Mi rayo golpea: %s"), *(ActorHit->GetName()));
 	}
+
+	return FHitResult();
+}
+
+// Called every frame
+void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	
 }
 
 

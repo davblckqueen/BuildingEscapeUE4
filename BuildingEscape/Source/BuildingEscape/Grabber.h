@@ -37,4 +37,12 @@ private:
 
 	//Called when Grab is released /  Funcion para cuando se suelta el comando Grab.
 	void Released();
+
+	//Find (asuumed) attached phyisics handle
+	void FindPhysicsComponent();
+
+	//Setup (asuumed) attached input component
+	void SetupInputComponent();
+
+	const FHitResult GetFirstPhysicsBodyInReach();
 };
