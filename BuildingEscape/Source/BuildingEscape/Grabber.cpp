@@ -32,16 +32,27 @@ void UGrabber::Grab()
 	UE_LOG(LogTemp, Warning, TEXT("Grab is pressed / Se presiono Grab."));
 
 	///LINE TRACE and see if we reach any actors with physics body collitions channel set
-	GetFirstPhysicsBodyInReach();
+	auto HitResult = GetFirstPhysicsBodyInReach();
+	auto ComponentToGrab = HitResult.GetComponent();
+	auto ActorHit = HitResult.GetActor();	
 
 	///If we hit something then attach a physics handle
-	//TODO attach physics handle
+	if (ActorHit)
+	{
+		PhysicsHandle->GrabComponentAtLocationWithRotation(
+			ComponentToGrab,
+			NAME_None,
+			ComponentToGrab->GetOwner()->GetActorLocation(),
+			ComponentToGrab->GetOwner()->GetActorRotation()
+		);
+	}
 }
 
 void UGrabber::Released()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Grab is released / Solto comando Grab."));
 	//TODO Release physics handle
+	PhysicsHandle->ReleaseComponent();
 }
 
 void UGrabber::FindPhysicsComponent()
@@ -86,9 +97,7 @@ const FHitResult UGrabber::GetFirstPhysicsBodyInReach()
 		OUT PlayerViewPointRotator
 	);
 
-
-
-	FVector LineTraceEnd = PlayerViewPointLocation + PlayerViewPointRotator.Vector() * Reach;
+	LineTraceEnd = PlayerViewPointLocation + PlayerViewPointRotator.Vector() * Reach;
 	///Draw a red trace in the world to visualice it
 	DrawDebugLine(
 		GetWorld(),
@@ -119,14 +128,29 @@ const FHitResult UGrabber::GetFirstPhysicsBodyInReach()
 		UE_LOG(LogTemp, Warning, TEXT("Mi rayo golpea: %s"), *(ActorHit->GetName()));
 	}
 
-	return FHitResult();
+	return Hit;
 }
 
 // Called every frame
 void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	
+	//Get player point view this tick
+	FVector PlayerViewPointLocation;
+	FRotator PlayerViewPointRotator;
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
+		OUT PlayerViewPointLocation,
+		OUT PlayerViewPointRotator
+	);
+
+	LineTraceEnd = PlayerViewPointLocation + PlayerViewPointRotator.Vector() * Reach;
+
+	//if the physics handle is attached
+	if (PhysicsHandle->GrabbedComponent)
+	{
+		//move the object that we are holding
+		PhysicsHandle->SetTargetLocation(LineTraceEnd);
+	}
 }
 
 
