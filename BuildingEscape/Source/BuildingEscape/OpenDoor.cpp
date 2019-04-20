@@ -28,42 +28,19 @@ void UOpenDoor::BeginPlay()
 	///ActorThatOpens = GetWorld()->GetFirstPlayerController()->GetPawn();
 }
 
-void UOpenDoor::OpenDoor()
-{	
-	//Owner->SetActorRotation(FRotator(0.0f, OpenAngle, 0.0f));
-	OnOpenRequest.Broadcast();
-}
-
-void UOpenDoor::CloseDoor()
-{
-	Owner->SetActorRotation(FRotator(0.0f, CloseAngle, 0.0f));
-}
-
 // Called every frame
 void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	//Poll the Trigger Volume
-	//if (PreassurePlate && PreassurePlate->IsOverlappingActor(ActorThatOpens))
-	//{
-	//	//If the ActorThatsOpen is in the volume
-	//	OpenDoor();
-	//	//Take second whit the pawn open the door
-	//	LastDoorOpenTime = GetWorld()->GetTimeSeconds();
-	//}	
-
-	if (GetTotalMassOfActorsOnPlate() > 35.f)
+	if (GetTotalMassOfActorsOnPlate() > TriggerMass)
 	{
 		//If the ActorThatsOpen is in the volume
-		OpenDoor();
-		//Take second whit the pawn open the door
-		LastDoorOpenTime = GetWorld()->GetTimeSeconds();
+		OnOpen.Broadcast();
 	}
-
-	if (GetWorld()->GetTimeSeconds() - LastDoorOpenTime > DoorCloseDelay)
+	else
 	{
-		CloseDoor();
+		OnClose.Broadcast();
 	}
 }
 
